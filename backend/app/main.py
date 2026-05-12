@@ -1,18 +1,30 @@
-# Import FastAPI framework
 from fastapi import FastAPI
+from app.routers import health
+from app.db.database import Base, engine
+from app.models import user
 
-# Create FastAPi app instance
-# This is the main entry point of the backend api
-app = FastAPI()
+# Create the FastAPI application instance with metadata
+app = FastAPI(
+    title="InterviewFlow API",
+    description="A technical interview practice platform",
+    version="1.0.0"
+)
 
-# Health check endpoint
-# Used to check if backend is running correctly
+# Event that runs when the application starts
+@app.on_event("startup")
+def on_startup():
+    # Create all database tables defined in SQLAlchemy models
+    Base.metadata.create_all(bind=engine)
+
+# Include the health check router
+app.include_router(health.router)
+
+# Root endpoint for basic API status
 @app.get("/")
-def read_root():
-    return{"message": "InterviewFlow API is running"}
+def root():
+    return {"message": "InterviewFlow API is running"}
 
-# Another test endpoint
-# This helps confirm routing works
-@app.get("/health")
-def health_check():
+# Simple health status endpoint
+@app.get("/Health")
+def health_status():
     return {"status": "ok"}
