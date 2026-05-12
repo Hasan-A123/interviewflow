@@ -2,6 +2,7 @@ from fastapi import FastAPI
 from app.routers import health
 from app.db.database import Base, engine
 from app.models import user
+from app.routers.health import router as health_router
 
 # Create the FastAPI application instance with metadata
 app = FastAPI(
@@ -9,6 +10,8 @@ app = FastAPI(
     description="A technical interview practice platform",
     version="1.0.0"
 )
+
+app.include_router(health_router)
 
 # Event that runs when the application starts
 @app.on_event("startup")
